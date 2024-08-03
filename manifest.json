@@ -1,0 +1,23 @@
+{
+    "manifest_version": 3,
+    "version": "2.0",
+    "author": "Thunderbird Team",
+    "name": "Message Display Example",
+    "browser_specific_settings": {
+      "gecko": {
+        "id": "messageDisplay@mv3.sample.extensions.thunderbird.net"
+      }
+    },
+    "permissions": [
+      "messagesRead"
+    ],
+    "background": {
+      "scripts": [
+        "background.js"
+      ]
+    },
+    "action": {
+      "default_popup": "/dist/index.html",
+      "default_title": "Action"
+    }
+  }
