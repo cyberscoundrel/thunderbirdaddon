@@ -16,6 +16,8 @@ export class MailBodyBuilder {
         this.details = details
         this.originals = originals
         this.byDuration = catagorizeBy(this.items, (e) => e.tq + e.duration)
+        this.byDW = this.items.filter((e) => e.dwcheck)
+        this.noDW = this.items.filter((e) => !e.dwcheck)
         this.byStatus = catagorizeBy(this.items,(e) => e.status + (['available','partial','not available', 'other store'].includes(e.status) ? '' : e.statusDate))
         this.inquireAvailable = this.items.filter((e) => e.status == 'available' && e.inquire)
         this.notAvailable = this.byStatus.filter((e) => !['available','other store'].includes(e.name))
@@ -28,6 +30,7 @@ export class MailBodyBuilder {
         this.unavailableItems()
         this.quantityMismatch()
         this.otherStoreItems()
+        this.priceCalc()
         this.insertCustomComment()
         this.inquireAvailableItems()
         this.requestedDocuments()
@@ -61,6 +64,21 @@ export class MailBodyBuilder {
             this.rstr += formattedItemListString(uPartials, false, (elm) => `only ${elm.quantity} of `) + ' are available. '
         }
         
+    }
+    priceCalc = () => {
+        let tpndw = 0
+        let dwp = 0
+        let totalwithtax = 0
+        
+        this.items.forEach((e) => {
+            tpndw += parseFloat(e.price) * parseInt(e.quantity)
+        })
+        this.byDW.forEach((e) => {
+            dwp += parseFloat(e.price) * parseInt(e.quantity)
+        })
+        dwp = (dwp * 0.12).toFixed(2)
+        totalwithtax = (parseFloat(tpndw) + parseFloat(dwp) + ((parseFloat(tpndw) + parseFloat(dwp)) * 0.08525)).toFixed(2)
+        this.rstr += `The approximate total price for these items${dwp > 0?  ` with an optional damage waiver of ${dwp}` : ''} is $${totalwithtax}. ${this.noDW.length ? `${capitalize(formattedItemListString(this.noDW, false))} are not covered by the damage waiver.` : ''}`
     }
     requestedItems = () => {
     
@@ -133,6 +151,9 @@ const catagorizeBy = (items, ctg) => {
         }
     })
     return Array.from(map, ([ n, v ]) => ({ name: n, value: v }))
+}
+const capitalize = (str) => {
+    return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
 

@@ -105,6 +105,8 @@ describe('testing regex extraction', () => {
         console.log(cont1)
         expect(cont0).toMatchObject({
             email: 'xxx@gmail.com',
+            date: '06/24/2024',
+            phone: 'Contact by E-Mail',
             items: [
                 {
                     item: 'Ozone Generator',
@@ -117,6 +119,8 @@ describe('testing regex extraction', () => {
         })
         expect(cont1).toMatchObject({
             email: 'xxxx@gmail.com',
+            date: '06/14/2024',
+            phone: 'Contact by phone',
             items: [
                 {
                     item: 'Toro TX 420/427 Compact Skid Steer',

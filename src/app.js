@@ -9,24 +9,24 @@ import { DetailsContext, DetailsDispatchContext, DetailsProvider, ItemContext, I
 import { MailBodyBuilder } from './util';
 import { list } from 'postcss';
 
-const getMessage = (part0, part1, callback) => {
-    console.log('hello')
-    browser.tabs.query({
+const getMessage = (part0, part1, callback, error = (e) => {console.log(`error ${e}`)}) => {
+
+    return browser.tabs.query({
         active: true,
         currentWindow: true,
     }).then(tabs => {
         let tabId = tabs[0].id;
         browser.messageDisplay.getDisplayedMessages(tabId).then(([message]) => {
-        //document.body.textContent = JSON.stringify(message);
+
         browser.messages.getFull(message.id).then((e) => {
-            //setCont(e.parts[part0].parts[part1].body)
+
             return e.parts[part0].parts[part1].body
         }).then((el) => {
             callback(el)
-        })
+        }).catch((e) => error(e))
 
 
-    });
+    }).catch((e) => error(e));
   });
 }
 
@@ -39,10 +39,14 @@ const newCompose = (data) => {
 export const parseContent = (content) => {
     let emailMatch = [...content.matchAll(remail)]
     let itemsMatch = [...content.matchAll(reitem)]
+    let datesMatch = [...content.matchAll(redate)]
+    let phonesMatch = [...content.matchAll(rephone)]
 
 
     let newItems = {
         email: emailMatch[0][1],
+        date: datesMatch[0][1],
+        phone: phonesMatch[0][1],
         items: []
     }
     console.log(itemsMatch.length)
@@ -68,6 +72,8 @@ export const parseContent = (content) => {
 const originals = []
 let remail = /E-Mail: ([a-zA-Z0-9-_]+@[a-zA-Z0-9-_.]+)/gu
 let reitem = /(\d+)[\s]+?([\S ]+)[\s]+?(\d+) X ([a-zA-Z]+)\(s\)[\s]+?Rental[\s]+?\$([\d.]+)/gum
+let redate = /Requested rental start date: ([0-9]+\/[0-9]+\/[0-9]+)/gu
+let rephone = /Preferred method of contact: ([a-zA-Z- ]+)/gu
 const Header = (props) => {
     const settingsDispatch = useContext(SettingsDispatchContext)
     const itemDispatch = useContext(ItemDispatchContext)
@@ -156,10 +162,12 @@ const Header = (props) => {
     const handleDebug = () => {
         detailsDispatch({
             type: 'set',
-            data: {
+            data: !details.debug ? {
                 debug: !details.debug,
                 messageTime: 2,
                 messageCont: 'Loaded Debug'
+            } : {
+                debug: !details.debug
             }
         })
         
@@ -345,6 +353,7 @@ const MainApp = () => {
     let itemsDispatch = React.useContext(ItemDispatchContext)
     
     let detailsDispatch = React.useContext(DetailsDispatchContext)
+    let details = React.useContext(DetailsContext)
     let handleExtract = (e) => {
         getMessage(0,0, (e) => {
             let parsedCont = parseContent(e)
@@ -355,9 +364,20 @@ const MainApp = () => {
             detailsDispatch({
                 type: 'add',
                 data: {
-                    email: e.email
+                    email: e.email,
+                    date: e.date,
+                    phone: /phone/.test(e.phone),
                 }
             })
+        }, (e) => {
+            detailsDispatch({
+                type: 'set',
+                data: {
+                    messageTime: 2,
+                    messageCont: `Error grabbing data: ${e}`
+                }
+            })
+
         })
         
     }
