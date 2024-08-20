@@ -7,7 +7,7 @@ import {Items} from './items'
 
 import { DetailsContext, DetailsDispatchContext, DetailsProvider, ItemContext, ItemDispatchContext, ItemProvider, itemReducer, SettingsContext, SettingsDispatchContext, SettingsProvider, useInterval } from './appcontext';
 import { MailBodyBuilder } from './util';
-import { list } from 'postcss';
+import { list, parse } from 'postcss';
 
 const getMessage = (part0, part1, callback, error = (e) => {console.log(`error ${e}`)}) => {
 
@@ -16,9 +16,12 @@ const getMessage = (part0, part1, callback, error = (e) => {console.log(`error $
         currentWindow: true,
     }).then(tabs => {
         let tabId = tabs[0].id;
-        browser.messageDisplay.getDisplayedMessages(tabId).then(([message]) => {
+        console.log(`tab id ${tabId}`)
+        browser.messageDisplay.getDisplayedMessages(tabId).then((message) => {
+            console.log(`got displayed ${message.messages[0].id}`)
 
-        browser.messages.getFull(message.id).then((e) => {
+        browser.messages.getFull(message.messages[0].id).then((e) => {
+            console.log(e)
 
             return e.parts[part0].parts[part1].body
         }).then((el) => {
@@ -37,6 +40,7 @@ const newCompose = (data) => {
 }
 
 export const parseContent = (content) => {
+    console.log(`content: ${content}`)
     let emailMatch = [...content.matchAll(remail)]
     let itemsMatch = [...content.matchAll(reitem)]
     let datesMatch = [...content.matchAll(redate)]
@@ -71,7 +75,8 @@ export const parseContent = (content) => {
 
 const originals = []
 let remail = /E-Mail: ([a-zA-Z0-9-_]+@[a-zA-Z0-9-_.]+)/gu
-let reitem = /(\d+)[\s]+?([\S ]+)[\s]+?(\d+) X ([a-zA-Z]+)\(s\)[\s]+?Rental[\s]+?\$([\d.]+)/gum
+let reitem = /(\d+)[\s]+?([\S ]+)[\s]+?(\d+) X ([a-zA-Z]*)\(s\)[\s]+?Rental(?:[\s]+?\$([\d.]+))?/gum
+//let reitem = /(\d+)[\s]+?([\S ]+)[\s]+?(\d+) X ([a-zA-Z]+)\(s\)[\s]+?Rental[\s]+?\$([\d.]+)/gum
 let redate = /Requested rental start date: ([0-9]+\/[0-9]+\/[0-9]+)/gu
 let rephone = /Preferred method of contact: ([a-zA-Z- ]+)/gu
 const Header = (props) => {
@@ -359,14 +364,14 @@ const MainApp = () => {
             let parsedCont = parseContent(e)
             itemsDispatch({
                 type: 'append',
-                list: e.items
+                list: parsedCont.items
             })
             detailsDispatch({
-                type: 'add',
+                type: 'set',
                 data: {
-                    email: e.email,
-                    date: e.date,
-                    phone: /phone/.test(e.phone),
+                    email: parsedCont.email,
+                    date: parsedCont.date,
+                    phone: /phone/.test(parsedCont.phone),
                 }
             })
         }, (e) => {
