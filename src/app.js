@@ -10,6 +10,9 @@ import {Items} from './items'
 import { DetailsContext, DetailsDispatchContext, DetailsProvider, ItemContext, ItemDispatchContext, ItemProvider, itemReducer, SettingsContext, SettingsDispatchContext, SettingsProvider, useInterval } from './appcontext';
 import { MailBodyBuilder } from './util';
 import { list, parse } from 'postcss';
+import { Header } from './header';
+import { Options } from './options';
+import { MessageModal } from './messagemodal';
 
 const getMessage = (part0, part1, callback, error = (e) => {console.log(`error ${e}`)}) => {
 
@@ -35,11 +38,11 @@ const getMessage = (part0, part1, callback, error = (e) => {console.log(`error $
   });
 }
 
-const newCompose = (data) => {
+/*const newCompose = (data) => {
     browser.compose.beginNew(undefined, {
         body: data.body
     })
-}
+}*/
 
 export const parseContent = (content) => {
     console.log(`content: ${content}`)
@@ -74,14 +77,18 @@ export const parseContent = (content) => {
     return newItems
 
 }
-
-const originals = []
+export const newCompose = (data) => {
+    browser.compose.beginNew(undefined, {
+        body: data.body
+    })
+}
+export const originals = []
 let remail = /E-Mail: ([a-zA-Z0-9-_]+@[a-zA-Z0-9-_.]+)/gu
 let reitem = /(\d+)[\s]+?([\S ]+)[\s]+?(\d+) X ([a-zA-Z]*)\(s\)[\s]+?Rental(?:[\s]+?\$([\d.]+))?/gum
 //let reitem = /(\d+)[\s]+?([\S ]+)[\s]+?(\d+) X ([a-zA-Z]+)\(s\)[\s]+?Rental[\s]+?\$([\d.]+)/gum
 let redate = /Requested rental start date: ([0-9]+\/[0-9]+\/[0-9]+)/gu
 let rephone = /Preferred method of contact: ([a-zA-Z- ]+)/gu
-const Header = (props) => {
+/*const Header = (props) => {
     const settingsDispatch = useContext(SettingsDispatchContext)
     const itemDispatch = useContext(ItemDispatchContext)
     const details = useContext(DetailsContext)
@@ -201,7 +208,7 @@ const Header = (props) => {
             </div>
         </div>
     )
-}
+}*/
 //const emailregex = new RegExp(/(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})/ig)
 export const validateDetails = (details) => {
     let emailregex = new RegExp(/(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})/ig)
@@ -227,7 +234,7 @@ export const validateItems = (items) => {
         return false
     }
     return true
-}
+}/*
 const MessageModal = () => {
     const details = React.useContext(DetailsContext)
     const detailsDispatch = React.useContext(DetailsDispatchContext)
@@ -337,7 +344,7 @@ const Options = () => {
             </div> : <></>}
         </div>
     )
-}
+}*/
 const Settings = (props) => {
     const settings = useContext(SettingsContext)
     const settingsDispatch = useContext(SettingsDispatchContext)
