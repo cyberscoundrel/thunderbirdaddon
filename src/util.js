@@ -43,11 +43,11 @@ export class MailBodyBuilder {
     }
     lastLines = () => {
         if(this.inquireAvailable.length > 0){
-            this.rstr += `If you are interested in making this a reservation, or have any questions, reply to this email and I will be happy to assist you.<br><br>`
+            this.rstr += `If you are interested in making this a reservation, or have any questions, reply to this email and I will be happy to assist you.`
         }
         this.rstr += `
     
-        Thank you,<br><br>
+        <br><br>Thank you,<br><br>
 
         ${this.details.sname? this.details.sname : ''}
         J&F Reddy Rents<br>

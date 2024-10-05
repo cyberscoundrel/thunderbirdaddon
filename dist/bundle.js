@@ -5402,9 +5402,9 @@ var MailBodyBuilder = /*#__PURE__*/_createClass(function MailBodyBuilder(items, 
   });
   _defineProperty(this, "lastLines", function () {
     if (_this.inquireAvailable.length > 0) {
-      _this.rstr += "If you are interested in making this a reservation, or have any questions, reply to this email and I will be happy to assist you.<br><br>";
+      _this.rstr += "If you are interested in making this a reservation, or have any questions, reply to this email and I will be happy to assist you.";
     }
-    _this.rstr += "\n    \n        Thank you,<br><br>\n\n        ".concat(_this.details.sname ? _this.details.sname : '', "\n        J&F Reddy Rents<br>\n        3320 Republic Ave<br>\n        Saint Louis Park, MN, 55426<br>\n        reddyrents.com\n        ");
+    _this.rstr += "\n    \n        <br><br>Thank you,<br><br>\n\n        ".concat(_this.details.sname ? _this.details.sname : '', "\n        J&F Reddy Rents<br>\n        3320 Republic Ave<br>\n        Saint Louis Park, MN, 55426<br>\n        reddyrents.com\n        ");
   });
   _defineProperty(this, "quantityMismatch", function () {
     var uPartials = _this.items.filter(function (elm) {
