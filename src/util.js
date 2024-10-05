@@ -38,21 +38,21 @@ export class MailBodyBuilder {
         return this.rstr
     }
     firstLines = () => {
-        this.rstr += `Hello${this.details.rname ? this.details.rname : ''},
+        this.rstr += `Hello${this.details.rname ? this.details.rname : ''},<br><br>
         We received your quote request for${this.items.length > 3 ? ':' : ''}`
     }
     lastLines = () => {
         if(this.inquireAvailable.length > 0){
-            this.rstr += `If you are interested in making this a reservation, or have any questions, reply to this email and I will be happy to assist you.`
+            this.rstr += `If you are interested in making this a reservation, or have any questions, reply to this email and I will be happy to assist you.<br><br>`
         }
         this.rstr += `
     
-        Thank you,
+        Thank you,<br><br>
 
         ${this.details.sname? this.details.sname : ''}
-        J&F Reddy Rents
-        3320 Republic Ave
-        Saint Louis Park, MN, 55426
+        J&F Reddy Rents<br>
+        3320 Republic Ave<br>
+        Saint Louis Park, MN, 55426<br>
         reddyrents.com
         `
     }

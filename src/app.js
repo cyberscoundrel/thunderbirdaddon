@@ -1,5 +1,7 @@
 import React, { useContext, useState, useRef, Fragment } from 'react';
 import { Popover, PopoverButton, PopoverPanel, Transition, Dialog  } from '@headlessui/react';
+
+import DatePicker from "react-datepicker";
 import ContentEditable from 'react-contenteditable';
 import { clsx } from 'clsx'
 
@@ -315,6 +317,12 @@ const Options = () => {
                     onChange={(e) => handleField('comment', e.target.value)}
                     className='w-full break-all' />
                 </div>
+                <div className='flex flex-row max-w-[600px] *:m-2'>
+                    <h3>Date:</h3><div 
+                    className='w-full break-all'><Popover>
+                        <PopoverButton><div>{details.date? details.date : ''}</div></PopoverButton><PopoverPanel className='absolute z-10'><DatePicker onChange={(e) => handleField('date', e.toLocaleDateString())} inline></DatePicker></PopoverPanel></Popover></div>
+                </div>
+
                 <div className='flex flex-row *:m-2'>
                     <h3>Bring:</h3><input type='checkbox'
                     onChange={() => handleToggle('dl')}
